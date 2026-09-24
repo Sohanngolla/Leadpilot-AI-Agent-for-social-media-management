@@ -1,4 +1,4 @@
-# WhatsApp + Instagram Lead Agent
+# LeadPilot AI — AI agent for social media management
 
 An always-on conversational agent that answers inbound WhatsApp and Instagram
 messages for a small business, runs paced cold-outreach and follow-up campaigns,
