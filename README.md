@@ -1,5 +1,14 @@
 # LeadPilot AI — AI agent for social media management
 
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-async-009688?logo=fastapi&logoColor=white)
+![Gemini](https://img.shields.io/badge/Google_Gemini-brain-4285F4?logo=googlegemini&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-state-003B57?logo=sqlite&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-Tunnel-F38020?logo=cloudflare&logoColor=white)
+![Status](https://img.shields.io/badge/status-production-2e7d32)
+![License](https://img.shields.io/badge/license-all_rights_reserved-8e1b16)
+
 An always-on conversational agent that answers inbound WhatsApp and Instagram
 messages for a small business, runs paced cold-outreach and follow-up campaigns,
 tracks every lead in a Google Sheet, and hands hot leads to a human — with a
