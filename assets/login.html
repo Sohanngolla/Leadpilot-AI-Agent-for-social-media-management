@@ -1,0 +1,1019 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#08090B"><title>Lead desk</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,500&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap"><style>
+:root{
+  color-scheme:light;
+  --stone:#F6F6F3;   --stone-deep:#ECECE7;
+  --ink:#0A0B0C;     --ink-soft:#64676A;
+  --line:rgba(10,11,12,.10);
+  --dark:#08090B;    --dark-2:#0F1113;
+  --dark-line:rgba(255,255,255,.10);
+  --paper-line:#F1F1EE;
+  --brass:#A9814F;   --brass-soft:#E3C795;
+  --brass-glow:rgba(169,129,79,.35);
+  --live:#2E7A5E;    --flag:#9E3B2A;    --caution:#8A5514;
+  --font-display:'Fraunces',Georgia,'Times New Roman',serif;
+  --font-body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,'SF Mono',SFMono-Regular,Menlo,monospace;
+  --wrap:1320px;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --ease-soft:cubic-bezier(.22,1,.36,1);
+  --dur-s:.35s; --dur-m:.6s; --dur-l:1.1s;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+/* One flat sheet of near-white read as unfinished — cards at #fff on a #F6F6F3
+   ground are three points apart, which is no contrast at all. The ground is now
+   the deeper stone, with two soft washes laid over it (brass from the right,
+   light from the left) so the cards sit on a shade of their own and the page has
+   somewhere to recede to. Both washes are decoration: if the gradients are not
+   understood the ground is still a solid, correct colour. */
+body{
+  margin:0;color:var(--ink);background:var(--stone-deep);
+  background-image:
+    radial-gradient(1180px 640px at 84% 300px,rgba(169,129,79,.06),rgba(169,129,79,0) 68%),
+    radial-gradient(980px 580px at 2% 900px,rgba(255,255,255,.82),rgba(255,255,255,0) 66%);
+  background-repeat:no-repeat;background-attachment:scroll;
+  font-family:var(--font-body);font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  animation:pageFadeIn .45s var(--ease) both;
+}
+@keyframes pageFadeIn{from{opacity:0}to{opacity:1}}
+/* iOS Safari does two things Android does not: it widens the layout viewport to
+   fit anything that overflows it — so one over-wide element zooms the whole page
+   out — and it inflates body text when the phone is turned to landscape. Both
+   are pinned here. `clip` rather than `hidden` so this can never quietly turn
+   <html> into a scroll container and break position:sticky further down. */
+html{overflow-x:clip;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:500;letter-spacing:-.015em}
+p{margin:0}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+::selection{background:var(--ink);color:var(--stone)}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 34px}
+@media (max-width:640px){.wrap{padding:0 18px}}
+
+/* The site's brass eyebrow, dot and glow included — used here as the label on
+   every card and section, so the panel is read in the same voice as the site. */
+.eyebrow{display:flex;align-items:center;gap:9px;font-family:var(--font-mono);
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);
+  margin:0 0 14px}
+.eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;flex:none;
+  background:var(--brass);box-shadow:0 0 0 4px var(--brass-glow)}
+
+/* --- Global chrome: injected by script, purely decorative ---------------- */
+.scroll-progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:999;
+  background:linear-gradient(90deg,var(--brass),var(--brass-soft));
+  box-shadow:0 0 10px var(--brass-glow);transition:width .08s linear}
+.cursor-glow{position:fixed;top:0;left:0;width:520px;height:520px;
+  margin:-260px 0 0 -260px;pointer-events:none;z-index:0;opacity:0;
+  will-change:transform;transition:opacity .4s ease;
+  background:radial-gradient(circle,var(--brass-glow) 0%,rgba(169,129,79,0) 70%)}
+.cursor-glow.is-active{opacity:.5}
+@media (max-width:980px),(pointer:coarse){.cursor-glow{display:none}}
+
+/* --- Nav: frosted, compresses on scroll, and stays put ------------------- */
+/* The site's nav slides away on the way down. Here it carries the view tabs,
+   so a nav that leaves takes the navigation with it. On a desk the bar is worth
+   its 66px. It is also the page's lightest band, sitting a shade above the
+   deeper ground below it. */
+.site-nav{position:sticky;top:0;z-index:50;background:rgba(250,250,248,.9);
+  backdrop-filter:saturate(150%) blur(14px);border-bottom:1px solid var(--line);
+  transition:box-shadow var(--dur-s) var(--ease)}
+.site-nav.is-scrolled{box-shadow:0 14px 38px -24px rgba(10,11,12,.4)}
+.site-nav .wrap{display:flex;align-items:center;
+  gap:20px;height:78px;transition:height var(--dur-s) var(--ease)}
+.site-nav.is-scrolled .wrap{height:66px}
+.logo{flex:none;margin-right:auto;display:flex;align-items:center;gap:11px;
+  font-family:var(--font-display);font-size:19px;
+  letter-spacing:.02em;white-space:nowrap}
+/* The mark carries the cream paper it was drawn on, so against a near-white nav
+   it needs the hairline to read as a badge instead of a smudge. flex:none
+   matters: an <img> is a flex item with an intrinsic width, and left to shrink on
+   a narrow phone a round one goes visibly oval. */
+.logo-mark{flex:none;width:36px;height:36px;border-radius:50%;
+  border:1px solid var(--line);object-fit:cover;
+  transition:transform var(--dur-s) var(--ease)}
+.logo:hover .logo-mark{transform:scale(1.06)}
+/* Scoped to the direct child: .logo span would now also match .logo-type and
+   turn the whole wordmark brass, the lead word included. */
+.logo-type>span{color:var(--brass)}
+.logo s{display:block;text-decoration:none;font-family:var(--font-mono);
+  font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);
+  margin-top:2px}
+.nav-right{display:flex;align-items:center;gap:14px;flex:none}
+.nav-sep{flex:none;width:1px;height:22px;background:var(--line)}
+/* Nothing to separate from with the script off: the tabs are not there and the
+   panels are all on the page at once. */
+body:not(.js) .nav-sep{display:none}
+
+/* Live/paused pill. The dot breathes only while the agent is actually answering,
+   so "is it on?" is legible from across a desk without reading a word. */
+.state{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);
+  font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--live);
+  border:1px solid currentColor;border-radius:999px;padding:6px 13px;white-space:nowrap}
+.state.off{color:var(--flag)}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none;
+  box-shadow:0 0 0 3px rgba(46,122,94,.18)}
+.state.off .dot{box-shadow:0 0 0 3px rgba(158,59,42,.18)}
+@media (prefers-reduced-motion:no-preference){
+  .state:not(.off) .dot{animation:breathe 2.4s var(--ease-soft) infinite}
+}
+@keyframes breathe{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.82)}}
+.clock{font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);
+  letter-spacing:.08em;font-variant-numeric:tabular-nums}
+/* The nav now carries the view tabs as well, so the clock — the one thing on it
+   nobody navigates by — is the first item given up for room. */
+@media (max-width:1200px){.clock{display:none}}
+
+/* --- Buttons: the site's pill with the fill sweeping up from below -------- */
+.btn{display:inline-flex;align-items:center;gap:9px;position:relative;isolation:isolate;
+  overflow:hidden;border:1px solid var(--ink);border-radius:999px;padding:12px 22px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  background:transparent;color:var(--ink);cursor:pointer;
+  transition:color var(--dur-s) var(--ease),border-color var(--dur-s) var(--ease),
+             transform var(--dur-s) var(--ease),box-shadow var(--dur-s) var(--ease)}
+.btn::before{content:'';position:absolute;inset:0;z-index:-1;background:var(--ink);
+  transform:translateY(102%);transition:transform .45s var(--ease);border-radius:inherit}
+.btn:hover{color:var(--stone);box-shadow:0 14px 30px -14px rgba(0,0,0,.35)}
+.btn:hover::before{transform:translateY(0)}
+.btn-solid{background:var(--ink);color:var(--stone)}
+.btn-solid::before{background:var(--brass)}
+.btn-solid:hover{border-color:var(--brass);color:#fff}
+.btn-arrow{display:inline-block;transition:transform var(--dur-s) var(--ease)}
+.btn:hover .btn-arrow{transform:translateX(5px)}
+.btn-mini{padding:8px 15px;font-size:10px}
+.btn-danger{border-color:var(--flag);color:var(--flag)}
+.btn-danger::before{background:var(--flag)}
+.btn-danger:hover{color:#fff;border-color:var(--flag)}
+.on-dark .btn{border-color:var(--dark-line);color:var(--paper-line)}
+.on-dark .btn::before{background:var(--brass-soft)}
+.on-dark .btn:hover{border-color:var(--brass-soft);color:var(--dark)}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+  padding:16px 20px;border-top:1px solid var(--line)}
+.bar .hint{margin:0}
+
+/* --- Crop marks: the site's one signature frame, reused on the masthead --- */
+.crop-frame{position:relative}
+.crop-frame .corner{position:absolute;width:20px;height:20px;pointer-events:none;
+  border-color:var(--brass-soft)}
+.corner.tl{top:-1px;left:-1px;border-top:2px solid;border-left:2px solid}
+.corner.tr{top:-1px;right:-1px;border-top:2px solid;border-right:2px solid}
+.corner.bl{bottom:-1px;left:-1px;border-bottom:2px solid;border-left:2px solid}
+.corner.br{bottom:-1px;right:-1px;border-bottom:2px solid;border-right:2px solid}
+
+/* --- Dark panels: the site's fractal-noise overlay, verbatim -------------- */
+.on-dark{background:var(--dark);color:var(--stone);position:relative}
+.on-dark::before{content:'';position:absolute;inset:0;opacity:.4;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/></svg>")}
+.on-dark>.wrap{position:relative;z-index:1}
+.on-dark .eyebrow{color:var(--brass-soft)}
+.on-dark .eyebrow::before{background:var(--brass-soft)}
+
+/* --- Masthead ------------------------------------------------------------- */
+/* The first thing the client looks at, so it is built in layers rather than as
+   one flat colour: the site's fractal noise on the plate (that one is .on-dark,
+   verbatim from the public site), then a hairline grid that fades out before it
+   reaches the type, then two brass orbs drifting behind everything. The grid and
+   the orbs share one span — aria-hidden, pointer-events:none, z-index 0, so they
+   land just above the noise, which is .on-dark::before at the same z-index but
+   earlier in tree order. Type stays clear of all three because
+   .on-dark>.wrap is z-index 1. They animate by transform alone, so a panel left
+   open on the client's second screen all day is not repainting anything. */
+.masthead{padding:52px 0 0;overflow:clip}
+.mast-ground{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+/* 88px squares, barely there, masked so they are strongest behind the gauges and
+   gone by the time they reach the headline. Graph paper under an editorial page. */
+.mast-ground::before{content:'';position:absolute;inset:-1px;
+  background-image:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 1px,transparent 1px 88px),
+    repeating-linear-gradient(180deg,rgba(255,255,255,.04) 0 1px,transparent 1px 88px);
+  -webkit-mask-image:radial-gradient(90% 125% at 84% -12%,#000 0%,rgba(0,0,0,.45) 44%,transparent 78%);
+  mask-image:radial-gradient(90% 125% at 84% -12%,#000 0%,rgba(0,0,0,.45) 44%,transparent 78%)}
+/* Two orbs on one layer, drifting as a pair. This was a single static radial; the
+   movement is the difference between a plate that is switched on and one that is
+   printed. Thirty-four seconds is slower than anyone watches on purpose — it is
+   meant to be noticed only by looking away and coming back. */
+.mast-ground::after{content:'';position:absolute;top:-300px;right:-220px;
+  width:820px;height:820px;will-change:transform;
+  background:
+    radial-gradient(circle at 34% 38%,var(--brass-glow) 0%,rgba(169,129,79,0) 62%),
+    radial-gradient(circle at 71% 67%,rgba(169,129,79,.15) 0%,rgba(169,129,79,0) 58%)}
+@media (prefers-reduced-motion:no-preference){
+  .mast-ground::after{animation:orbDrift 34s var(--ease-soft) infinite alternate}
+}
+@keyframes orbDrift{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(-44px,28px,0) scale(1.07)}
+  100%{transform:translate3d(26px,-20px,0) scale(.97)}}
+
+.mast-top{display:flex;justify-content:space-between;align-items:flex-end;gap:48px;
+  padding-bottom:34px}
+.mast-top .eyebrow{animation:mastIn var(--dur-m) var(--ease) both}
+.mast-top h1{font-size:clamp(30px,4.1vw,50px);line-height:1.06;letter-spacing:-.025em;
+  margin-top:9px}
+/* Per line, not per word and not per block: each line rises out from behind the
+   one above it, which is the site's own transition applied to type. The
+   padding/margin pair is not decoration — overflow:hidden at line-height 1.06
+   would otherwise cut the descender off the y in "Every". */
+.mast-top h1 .ln{display:block;overflow:hidden;padding-bottom:.14em;margin-bottom:-.14em}
+.mast-top h1 .ln>span{display:block;animation:lineUp var(--dur-l) var(--ease) both}
+.mast-top h1 .ln:nth-child(2)>span{animation-delay:.1s}
+@keyframes lineUp{from{opacity:0;transform:translateY(105%)}
+  to{opacity:1;transform:translateY(0)}}
+.mast-top h1 em{font-style:italic;color:var(--brass-soft);position:relative}
+/* A brass hairline drawn under the two words the sentence turns on, after the line
+   carrying them has finished arriving. */
+.mast-top h1 em::after{content:'';position:absolute;left:0;right:0;bottom:.02em;
+  height:2px;background:var(--brass-soft);opacity:.45;transform-origin:left;
+  animation:ruleIn .85s .6s var(--ease) both}
+@keyframes ruleIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.mast-top .lede{margin-top:18px;max-width:44ch;color:#9A9D9F;font-size:14.5px;
+  animation:mastIn var(--dur-l) .26s var(--ease) both}
+@keyframes mastIn{from{opacity:0;transform:translateY(16px);filter:blur(5px)}
+  to{opacity:1;transform:none;filter:blur(0)}}
+
+/* Two live gauges. Both read straight off pacer.status(), so what they show is
+   the queue as it actually is, not a guess from the last page load. */
+.gauges{display:grid;gap:14px;min-width:300px;
+  animation:mastIn var(--dur-l) .34s var(--ease) both}
+.gauge{position:relative;border:1px solid var(--dark-line);padding:15px 17px 16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.013));
+  transition:border-color var(--dur-s) var(--ease),transform var(--dur-s) var(--ease)}
+/* One lit pixel along the top edge. It is the whole difference between something
+   that reads as glass over the plate and a grey box drawn on it. */
+.gauge::before{content:'';position:absolute;left:0;right:0;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3) 20%,
+    var(--brass-soft) 52%,rgba(255,255,255,.18) 80%,transparent);
+  opacity:.5;transition:opacity var(--dur-s) var(--ease)}
+.gauge:hover{border-color:rgba(255,255,255,.2);transform:translateY(-2px)}
+.gauge:hover::before{opacity:1}
+.gauge-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.gauge-k{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.17em;
+  text-transform:uppercase;color:#8B8E90}
+.gauge-v{font-family:var(--font-mono);font-size:20px;color:var(--stone);
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.gauge-v s{text-decoration:none;font-size:12px;color:#7E8183;letter-spacing:.02em}
+/* A number that moved on its own is the only thing on this plate the client did
+   not cause, so it is worth a second of brass. The class goes on from the poll and
+   comes off again — see `pulse` in the bundle — and the animation has no fill mode
+   so a browser that never fires animationend still ends up with the right colour. */
+.lit-change{animation:numPulse .9s var(--ease)}
+@keyframes numPulse{
+  0%,18%{color:var(--brass-soft);text-shadow:0 0 15px var(--brass-glow)}
+  100%{color:inherit;text-shadow:0 0 0 rgba(169,129,79,0)}}
+.meter{height:3px;margin-top:11px;background:var(--dark-line);overflow:hidden}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--brass),var(--brass-soft));
+  transform-origin:left;animation:meterIn var(--dur-l) var(--ease) both;
+  transition:width .5s var(--ease)}
+@keyframes meterIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.meter.hot i{background:linear-gradient(90deg,#B4472F,#D9765C)}
+/* Worker occupancy as discrete cells: three cells, two lit = two conversations
+   in flight. Reads faster than "2/3" and needs no label. */
+.cells-mini{display:flex;gap:4px;margin-top:11px}
+.cells-mini b{flex:1;height:3px;background:var(--dark-line);
+  transition:background .4s var(--ease),box-shadow .4s var(--ease)}
+.cells-mini b.lit{background:var(--brass-soft);box-shadow:0 0 8px var(--brass-glow)}
+.sparkline{display:none;margin-top:11px}
+.sparkline.on{display:block}
+.sparkline svg{width:100%;height:26px;display:block;overflow:visible}
+.sparkline polyline{fill:none;stroke:var(--brass-soft);stroke-width:1.4;
+  stroke-linejoin:round;stroke-linecap:round}
+.spark-k,.gauge-note{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:#6E7173;margin-top:5px;display:block}
+.gauge-note{margin-top:9px}
+
+/* --- The day's five numbers ----------------------------------------------- */
+.cells{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--dark-line)}
+.cell{padding:23px 22px 27px;border-right:1px solid var(--dark-line);position:relative;
+  animation:mastIn var(--dur-m) var(--ease) both;
+  transition:background var(--dur-s) var(--ease)}
+/* A brass hairline drawn across the top of each number in turn, left to right, as
+   the strip arrives — the same sweep the site runs under its nav links, turned
+   horizontal and given five numbers to introduce. It draws itself and then fades,
+   so what is left is the plain rule; hover brings it back on the one being read. */
+.cell::before{content:'';position:absolute;left:0;right:0;top:-1px;height:1px;
+  background:var(--brass-soft);opacity:0;transform:scaleX(0);transform-origin:left;
+  animation:cellRule 1.05s var(--ease) both;
+  transition:opacity var(--dur-s) var(--ease)}
+@keyframes cellRule{0%{transform:scaleX(0);opacity:0}26%{opacity:.85}
+  100%{transform:scaleX(1);opacity:0}}
+.cell:nth-child(1){animation-delay:.30s} .cell:nth-child(1)::before{animation-delay:.30s}
+.cell:nth-child(2){animation-delay:.37s} .cell:nth-child(2)::before{animation-delay:.37s}
+.cell:nth-child(3){animation-delay:.44s} .cell:nth-child(3)::before{animation-delay:.44s}
+.cell:nth-child(4){animation-delay:.51s} .cell:nth-child(4)::before{animation-delay:.51s}
+.cell:nth-child(5){animation-delay:.58s} .cell:nth-child(5)::before{animation-delay:.58s}
+.cell:last-child{border-right:0}
+.cell:hover{background:rgba(255,255,255,.026)}
+.cell:hover::before{animation:none;transform:scaleX(1);opacity:.7}
+.cell .k{display:flex;align-items:center;gap:7px;font-family:var(--font-mono);
+  font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#8B8E90}
+/* The tick that was implied by the gap already in this rule. It grows under the
+   pointer, which is the only thing five identical labels needed. */
+.cell .k::before{content:'';flex:none;width:13px;height:1px;background:currentColor;
+  opacity:.45;transition:width var(--dur-s) var(--ease),opacity var(--dur-s) var(--ease)}
+.cell:hover .k::before{width:22px;opacity:1}
+.cell .v{display:block;font-family:var(--font-display);font-size:clamp(30px,3.4vw,44px);
+  line-height:1;letter-spacing:-.03em;margin-top:13px;font-variant-numeric:tabular-nums}
+.cell .u{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:#7E8183;
+  margin-left:7px;vertical-align:2px}
+/* "Needs you" going from nought to one is the only number on this strip that is
+   news. The wash fades in on the poll that reports it, so it arrives while the
+   client is looking at another tab rather than waiting for a reload. */
+.cell.flagged{background:linear-gradient(180deg,rgba(169,129,79,.11),rgba(169,129,79,0) 76%)}
+.cell.flagged .v,.cell.flagged .k{color:var(--brass-soft)}
+.cell.flagged .k::before{background:var(--brass-soft);opacity:1}
+.cell.flagged::after{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--brass-soft)}
+@media (prefers-reduced-motion:no-preference){
+  .cell.flagged::after{animation:edgePulse 2.2s var(--ease-soft) infinite}
+}
+@keyframes edgePulse{0%,100%{opacity:1}50%{opacity:.25}}
+@media (max-width:1080px){
+  .mast-top{flex-direction:column;align-items:flex-start;gap:30px}
+  .gauges{min-width:0;width:100%;grid-template-columns:1fr 1fr}
+  .cells{grid-template-columns:repeat(3,1fr)}
+  .cell{border-bottom:1px solid var(--dark-line)}
+}
+@media (max-width:620px){
+  .cells{grid-template-columns:repeat(2,1fr)}
+  .gauges{grid-template-columns:1fr}
+  .cell{padding:16px 16px 19px}
+  /* The orbs are sized for a 1320px plate; at 360px they wash the whole thing out
+     and the headline loses its contrast. */
+  .mast-ground::after{top:-190px;right:-170px;width:540px;height:540px}
+  .mast-ground::before{background-size:56px 56px,56px 56px}
+}
+
+/* --- View tabs: the site's nav links, in the nav -------------------------- */
+/* Exactly the public-site mechanism — a 13.5px label, an ink hairline that
+   sweeps in from the left, brass for the view you are on, and one solid pill at
+   the end where the site puts START A PROJECT. They now sit in the nav bar
+   itself, top right, so the desk is navigated where the site is navigated.
+   Counts are brass chips rather than bare numerals: at 9px a numeral beside a
+   label reads as part of the label. */
+.deck{padding-top:34px;padding-bottom:96px}
+.tabs{display:none;align-items:center;gap:30px;min-width:0}
+body.js .tabs{display:flex}
+.tab:not(.btn){position:relative;flex:none;border:0;border-radius:0;
+  background:transparent;cursor:pointer;padding:9px 0;color:var(--ink-soft);
+  font-family:var(--font-body);font-size:13.5px;font-weight:500;letter-spacing:.01em;
+  white-space:nowrap;transition:color var(--dur-s) var(--ease)}
+.tab:not(.btn)::after{content:'';position:absolute;left:0;right:100%;bottom:0;
+  height:1px;background:var(--ink);transition:right .38s var(--ease)}
+.tab:not(.btn):hover{color:var(--ink)}
+.tab:not(.btn):hover::after,.tab:not(.btn).is-on::after{right:0}
+.tab:not(.btn).is-on{color:var(--brass)}
+.tab:not(.btn).is-on::after{background:var(--brass)}
+.tab b{display:inline-block;min-width:17px;margin-left:8px;padding:0 4px;
+  border-radius:999px;background:var(--brass);color:#fff;text-align:center;
+  font-family:var(--font-mono);font-weight:500;font-size:9px;line-height:16px;
+  letter-spacing:.02em;vertical-align:1.5px}
+.tab b.hot{background:var(--flag);box-shadow:0 0 0 3px rgba(158,59,42,.14)}
+.tab.btn{flex:none;margin-left:6px;padding:11px 20px;font-size:10.5px}
+.tab.btn b{background:var(--brass-soft);color:var(--dark)}
+/* The bar carries seven things now, so it gives them up in order of how little
+   anyone navigates by them: the gaps tighten, then the clock goes, then the tabs
+   drop onto a row of their own inside the same sticky bar — one bar, no gap,
+   still no crooked band for the panels to scroll through. That row scrolls
+   sideways rather than wrapping, so the nav never grows a third line.
+   1080px is where the single row measures out at about 950px of content against
+   1012px of wrap: below it the row would overflow and overflow-x:hidden on the
+   body would quietly clip Sign out off the right edge. */
+@media (max-width:1200px){
+  .site-nav .wrap{gap:16px}
+  .tabs{gap:24px}
+}
+@media (max-width:1080px){
+  .site-nav .wrap,.site-nav.is-scrolled .wrap{height:auto;flex-wrap:wrap;
+    padding-top:13px;padding-bottom:0}
+  .tabs{order:3;flex:0 0 100%;margin:9px -34px 0;padding:0 34px 7px;
+    gap:22px;overflow-x:auto;overflow-y:hidden;
+    scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab:not(.btn){padding:8px 0 10px}
+  .deck{padding-top:26px}
+}
+@media (max-width:640px){
+  .site-nav .wrap,.site-nav.is-scrolled .wrap{padding-top:11px}
+  .tabs{margin:8px -18px 0;padding:0 18px 6px;gap:19px}
+  .logo{font-size:17px;gap:9px}
+  .logo-mark{width:31px;height:31px}
+  .deck{padding-top:22px;padding-bottom:80px}
+}
+/* On a 360px phone the first row measures ~426px: the logo, the live pill and
+   Sign out cannot all be on it. Sign out goes — it is the one of the three that
+   is also in the footer, and "is it answering?" is the reason anyone opens this
+   on a phone in the first place. */
+@media (max-width:560px){
+  .nav-right .btn-mini,.nav-sep{display:none}
+  .state{padding:5px 11px;letter-spacing:.12em}
+}
+
+/* Panels are plain sections. Without script every one of them is on the page,
+   stacked, and the tabs are the nav's own links — the panel still works, it is
+   just longer. body.js is what turns them into tabs. */
+.panel{padding-top:6px}
+body.js .panel{display:none}
+body.js .panel.is-on{display:block;animation:panelIn .5s var(--ease) both}
+@keyframes panelIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.panel>.section-head{margin-bottom:26px}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:34px;
+  padding-bottom:20px;border-bottom:1px solid var(--line);position:relative;margin-bottom:26px}
+.section-head::after{content:'';position:absolute;left:0;bottom:-1px;height:1px;width:0;
+  background:var(--brass);transition:width 1s var(--ease)}
+.section-head.is-visible::after{width:64px}
+.section-head h2{font-size:clamp(23px,2.5vw,31px)}
+.section-head p{color:var(--ink-soft);max-width:40ch;font-size:13.5px}
+body.js .panel:not(.is-on) .reveal{opacity:0}
+
+/* --- Layout: two columns where it helps, one where it does not ------------ */
+.split{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:24px;align-items:start}
+.split-even{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;
+  align-items:start}
+/* minmax(0,…) and not a bare `1fr`, which means `minmax(auto,1fr)` — and the
+   auto floor is min-content. `.snip` is white-space:nowrap, so its min-content
+   is the full width of the longest message preview in the inbox: that floor
+   pushed this single-column track wider than the phone viewport, which is what
+   cut the cards off on the right and left the sticky header floating over the
+   content in landscape. The two-column rule above already guards against it. */
+@media (max-width:1000px){.split{grid-template-columns:minmax(0,1fr)}}
+
+/* --- Cards ---------------------------------------------------------------- */
+/* Flat white squares read as a spreadsheet. The site's cards are rounded, sit
+   on paper rather than pure white, carry a wash of brass light from the top
+   left and lift on hover — so these do the same. `overflow:hidden` is what
+   lets the header band and the accent bar follow the corner. */
+.card{position:relative;min-width:0;margin-bottom:24px;border:1px solid var(--line);
+  border-radius:20px;overflow:hidden;
+  background:radial-gradient(120% 90% at 18% 0%,rgba(169,129,79,.07),rgba(255,255,255,0) 54%),
+             linear-gradient(180deg,#fff,#FCFCFA);
+  box-shadow:0 1px 2px rgba(10,11,12,.03),0 20px 44px -38px rgba(10,11,12,.22);
+  transition:box-shadow var(--dur-m) var(--ease),border-color var(--dur-m) var(--ease),
+             transform var(--dur-m) var(--ease)}
+.card:hover{border-color:rgba(169,129,79,.38);transform:translateY(-2px);
+  box-shadow:0 1px 2px rgba(10,11,12,.03),0 30px 70px -46px rgba(10,11,12,.42)}
+/* Header: a tinted band with the site's brass eyebrow dot at its left. Now that
+   the ground under the card is the deeper stone, the card is three steps rather
+   than one: ground at #ECECE7, this band at about #F3F3F0, the body at #fff.
+   Tinting the band the whole way to the ground colour made the card's top edge
+   disappear into the page. */
+.card>h2,.card>.card-head{position:relative;display:flex;justify-content:space-between;
+  align-items:center;gap:14px;padding:15px 20px 15px 36px;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(236,236,231,.66),rgba(246,246,243,.34));
+  font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-soft)}
+.card>h2::before,.card>.card-head::before{content:'';position:absolute;left:20px;top:50%;
+  margin-top:-3px;width:5px;height:5px;border-radius:50%;background:var(--brass);
+  box-shadow:0 0 10px var(--brass-glow)}
+.card>h2 em,.card>.card-head em{font-style:normal;color:var(--brass);letter-spacing:.08em;
+  white-space:nowrap}
+.card>h2 em.hot,.card>.card-head em.hot{color:var(--flag)}
+.card.accent{border-color:rgba(169,129,79,.4)}
+.card.accent::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;z-index:1;
+  background:linear-gradient(var(--brass),var(--brass-soft))}
+.pad{padding:20px}
+.hint{margin:0;color:var(--ink-soft);font-size:12.5px;line-height:1.55}
+.hint-pad{padding:15px 20px 0}
+.empty{padding:44px 20px;text-align:center;color:var(--ink-soft);font-size:13px}
+.empty b{display:block;font-family:var(--font-display);font-size:19px;color:var(--ink);
+  margin-bottom:6px;font-weight:500}
+.empty .mark{display:block;width:26px;height:26px;margin:0 auto 14px;border:1px solid var(--brass);
+  border-radius:50%;position:relative}
+.empty .mark::after{content:'';position:absolute;inset:9px;background:var(--brass);border-radius:50%;
+  opacity:.5}
+
+/* --- Inbox: search, chips, rows ------------------------------------------- */
+.listtools{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:14px 20px;
+  border-bottom:1px solid var(--line)}
+body:not(.js) .listtools{display:none}
+.search{flex:1 1 210px;min-width:0;font-family:var(--font-body);font-size:13.5px;
+  color:var(--ink);background:var(--stone);border:1px solid var(--line);border-radius:999px;
+  padding:9px 15px;transition:border-color var(--dur-s) var(--ease),background var(--dur-s) var(--ease)}
+.search::placeholder{color:#9EA1A4}
+.search:focus{background:#fff;border-color:var(--brass);outline:none}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);border-radius:999px;background:transparent;cursor:pointer;
+  padding:7px 13px;color:var(--ink-soft);font-family:var(--font-mono);font-size:9.5px;
+  letter-spacing:.12em;text-transform:uppercase;
+  transition:all var(--dur-s) var(--ease)}
+.chip:hover{color:var(--ink);border-color:rgba(10,11,12,.3)}
+.chip.is-on{background:var(--brass);border-color:var(--brass);color:#fff}
+
+.lead{display:block;padding:15px 20px;border-bottom:1px solid var(--line);position:relative;
+  transition:background var(--dur-s) var(--ease),padding-left var(--dur-s) var(--ease)}
+.lead::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--brass);
+  transform:scaleY(0);transform-origin:top;transition:transform var(--dur-m) var(--ease)}
+.lead:last-child{border-bottom:0}
+.lead:hover{background:var(--paper-line);padding-left:26px}
+.lead:hover::before{transform:scaleY(1)}
+.lead.sel{background:var(--stone-deep)}
+.lead.sel::before{transform:scaleY(1)}
+.lead.hidden{display:none}
+.lead-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.num{font-family:var(--font-mono);font-size:13.5px;letter-spacing:.01em;
+  display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.when{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-soft);white-space:nowrap;
+  letter-spacing:.05em}
+.snip{display:block;margin:7px 0 0;color:var(--ink-soft);font-size:13px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Why a conversation is Stopped/Cold, one quiet line under the preview. The
+   dot before it ties it to the amber accent without shouting. */
+.lead-why{display:block;margin:6px 0 0;font-family:var(--font-mono);font-size:10px;
+  letter-spacing:.04em;color:var(--caution)}
+.lead-why::before{content:'•\00a0';color:var(--brass)}
+.tag{display:inline-block;font-family:var(--font-mono);font-size:9px;letter-spacing:.13em;
+  text-transform:uppercase;padding:4px 7px;border:1px solid currentColor;border-radius:999px;
+  color:var(--ink-soft)}
+.tag.hot{color:var(--flag)}
+.tag.mine{color:var(--brass)}
+.tag.cool{color:var(--ink-soft)}
+.tag.ok{color:var(--live)}
+.tag.warn{color:var(--caution)}
+.noresult{display:none;padding:34px 20px;text-align:center;color:var(--ink-soft);font-size:13px}
+.noresult.on{display:block}
+
+/* --- Transcript ----------------------------------------------------------- */
+.turns{padding:20px;max-height:56vh;overflow:auto;background:
+  linear-gradient(var(--stone) 0 1px,transparent 1px 100%) 0 0/100% 26px}
+.turn{max-width:76%;padding:11px 14px;margin-bottom:12px;font-size:13.5px;line-height:1.55;
+  overflow-wrap:anywhere;
+  border:1px solid var(--line);background:#fff;border-radius:2px 14px 14px 14px;
+  animation:bubbleIn .55s var(--ease) both;animation-delay:calc(var(--i,0)*45ms)}
+.turn.model{margin-left:auto;background:var(--ink);color:var(--paper-line);
+  border-color:var(--ink);border-radius:14px 2px 14px 14px}
+.turn .at{display:block;margin-top:6px;font-family:var(--font-mono);font-size:9.5px;opacity:.6;
+  letter-spacing:.06em}
+@keyframes bubbleIn{from{opacity:0;transform:translateY(9px);filter:blur(3px)}
+  to{opacity:1;transform:none;filter:blur(0)}}
+.thread-head{align-items:flex-start!important;flex-wrap:wrap}
+/* This header wraps onto two lines on a narrow column, so the eyebrow dot is
+   pinned to the first line rather than to the middle of the whole band. */
+.card>.thread-head::before{top:21px;margin-top:0}
+.thread-who{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-family:var(--font-mono);font-size:12.5px;letter-spacing:.02em;
+  text-transform:none;color:var(--ink)}
+.copy{border:0;background:transparent;cursor:pointer;color:var(--ink-soft);padding:2px 0;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  transition:color var(--dur-s) var(--ease)}
+.copy:hover{color:var(--brass)}
+body:not(.js) .copy{display:none}
+
+/* --- Switches: a real checkbox, drawn as a track --------------------------- */
+/* Still one `input[type=checkbox]` and nothing else — the track, the knob and
+   the ON/OFF legend are all drawn on the input itself, so the control the form
+   posts is the control the client clicks. The track is recessed when off and
+   lit brass with a glow ring when on, which is the difference that has to be
+   readable at a glance from across a desk. */
+label.sw{position:relative;display:flex;gap:18px;align-items:flex-start;padding:17px 20px;
+  border-bottom:1px solid var(--line);cursor:pointer;
+  transition:background var(--dur-s) var(--ease)}
+/* Every other row a shade deeper: five identical white bands were impossible to
+   keep your place in. */
+label.sw:nth-of-type(even){background:rgba(236,236,231,.5)}
+label.sw:hover{background:var(--paper-line)}
+label.sw:last-of-type{border-bottom:0}
+/* A brass edge marks the switches that are on, so the card answers "what is
+   running?" before a single label is read. */
+label.sw::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--brass);opacity:0;transition:opacity var(--dur-s) var(--ease)}
+label.sw:has(input:checked)::before{opacity:.85}
+.sw input{appearance:none;-webkit-appearance:none;flex:none;margin:1px 0 0;
+  width:52px;height:29px;border-radius:999px;border:1px solid rgba(10,11,12,.14);
+  background:linear-gradient(180deg,var(--stone-deep),#E2E2DC);position:relative;
+  cursor:pointer;overflow:hidden;
+  box-shadow:inset 0 2px 4px rgba(10,11,12,.13),inset 0 -1px 0 rgba(255,255,255,.7);
+  transition:background var(--dur-s) var(--ease),border-color var(--dur-s) var(--ease),
+             box-shadow var(--dur-s) var(--ease)}
+/* The legend sits behind the knob and swaps sides with it, so whichever word is
+   showing is always the state the switch is in. Sized to clear the knob: OFF
+   occupies x 29-44 of a 50px track against a knob that ends at 24, ON occupies
+   10-20 against a knob that starts at 26. */
+.sw input::before{content:'OFF';position:absolute;top:0;right:6px;
+  font-family:var(--font-mono);font-size:7.5px;line-height:27px;letter-spacing:.08em;
+  color:var(--ink-soft);transition:color var(--dur-s) var(--ease)}
+.sw input::after{content:'';position:absolute;top:3px;left:3px;width:21px;height:21px;
+  border-radius:50%;background:linear-gradient(180deg,#fff,#F3F3EF);
+  box-shadow:0 1px 3px rgba(10,11,12,.3),0 0 0 1px rgba(10,11,12,.04);
+  transition:transform .42s var(--ease),background var(--dur-s) var(--ease)}
+.sw input:checked{border-color:var(--brass);
+  background:linear-gradient(180deg,var(--brass-soft),var(--brass) 62%);
+  box-shadow:inset 0 1px 2px rgba(10,11,12,.18),0 0 0 4px var(--brass-glow)}
+.sw input:checked::before{content:'ON';right:auto;left:10px;color:rgba(255,255,255,.95)}
+.sw input:checked::after{transform:translateX(23px);
+  background:linear-gradient(180deg,#fff,#FBF6EE)}
+.sw input:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+.sw b{display:block;font-weight:600;font-size:14px;letter-spacing:-.005em}
+.sw small{display:block;margin-top:3px;color:var(--ink-soft);font-size:12.5px;line-height:1.5}
+@media (max-width:640px){
+  label.sw{gap:14px;padding:15px 16px}
+  .sw small{font-size:12px}
+}
+
+/* --- Number rows and the guard-rail notes --------------------------------- */
+.row{display:flex;justify-content:space-between;align-items:center;gap:14px;
+  padding:13px 20px;border-bottom:1px solid var(--line);
+  transition:background var(--dur-s) var(--ease)}
+/* Banded like the switches, and for the same reason: eleven numbers in a column
+   of identical white rows is where a client loses which line they are editing.
+   Both the hover and the warn/stop tints below have to beat this, so it is
+   declared first and they are declared after. */
+.row:nth-of-type(even){background:rgba(236,236,231,.5)}
+.row:hover{background:var(--paper-line)}
+.row:last-of-type{border-bottom:0}
+.row .lbl{font-size:13.5px}
+.row .u{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.11em;color:var(--ink-soft);margin-left:9px}
+/* A banded row keeps its one-line shape and drops the verdict underneath, so
+   the column of numbers stays scannable until something needs saying. */
+.row.banded{flex-wrap:wrap}
+.note{flex:0 0 100%;margin:6px 0 2px;font-size:12px;line-height:1.55;color:var(--ink-soft);
+  max-width:56ch;transition:color var(--dur-s) var(--ease)}
+.note:empty{display:none}
+.note.warn{color:var(--caution)}
+.note.stop{color:var(--flag);font-weight:500}
+.note.warn::before,.note.stop::before{content:"▲ ";font-size:9px;vertical-align:1.5px}
+.row.lvl-warn{background:rgba(138,85,20,.045)}
+.row.lvl-stop{background:rgba(158,59,42,.05)}
+.row.lvl-warn input[type=number]{border-color:var(--caution)}
+.row.lvl-stop input[type=number]{border-color:var(--flag);box-shadow:0 0 0 3px rgba(158,59,42,.1)}
+input[type=number],input[type=password],textarea{font-family:var(--font-mono);font-size:13.5px;
+  line-height:1.5;color:var(--ink);background:#fff;border:1px solid var(--line);
+  padding:9px 11px;border-radius:3px;
+  transition:border-color var(--dur-s) var(--ease),box-shadow var(--dur-s) var(--ease)}
+input[type=number]{width:92px;text-align:right;font-variant-numeric:tabular-nums}
+input[type=number]:focus,input[type=password]:focus,textarea:focus{border-color:var(--brass);
+  box-shadow:0 0 0 3px var(--brass-glow);outline:none}
+
+/* --- The stepper: one field, two buttons over it --------------------------- */
+/* The browser's own up/down arrows are two 7px targets stacked inside the box,
+   unhittable on a phone and invisible until you hover. This is the same input
+   with a minus and a plus either side of it, drawn as one control: the buttons
+   own the outer border and radius, the field in the middle keeps none of its own,
+   and the focus ring goes round the whole group rather than the middle third.
+   Nothing here is required to use the panel — with the script off the buttons are
+   gone and the native arrows are back, which is why the arrows are only
+   suppressed under body.js. */
+.numset{display:inline-flex;align-items:center}
+.stepper{display:inline-flex;align-items:stretch;position:relative;border-radius:4px;
+  transition:box-shadow var(--dur-s) var(--ease)}
+.stepper:has(input:focus){box-shadow:0 0 0 3px var(--brass-glow)}
+.step{display:none;flex:none;position:relative;align-items:center;justify-content:center;
+  width:32px;padding:0;
+  border:1px solid var(--line);background:linear-gradient(180deg,#fff,var(--stone));
+  color:var(--ink-soft);font-family:var(--font-mono);font-size:14px;line-height:1;
+  cursor:pointer;-webkit-user-select:none;user-select:none;
+  transition:background var(--dur-s) var(--ease),color var(--dur-s) var(--ease),
+             border-color var(--dur-s) var(--ease)}
+body.js .step{display:inline-flex}
+.step[data-step="-1"]{border-radius:4px 0 0 4px;border-right:0}
+.step[data-step="1"]{border-radius:0 4px 4px 0;border-left:0}
+.step:hover{background:var(--ink);border-color:var(--ink);color:var(--stone)}
+/* Pressed state is its own step down rather than a scale: the control is 32px
+   wide and a transform on something that small reads as a wobble. */
+.step:active{background:var(--brass);border-color:var(--brass);color:#fff}
+.step:focus-visible{outline:2px solid var(--brass);outline-offset:2px;z-index:2}
+/* At the floor or the ceiling the button says so and stops, rather than clicking
+   to no effect — the one thing a stepper has to communicate that a bare field
+   does not. dashboard.RANGES is where those two numbers come from. */
+.step[disabled]{cursor:not-allowed;opacity:.32;background:var(--stone-deep)}
+.step[disabled]:hover{background:var(--stone-deep);border-color:var(--line);
+  color:var(--ink-soft)}
+/* The field between the buttons gives up its radius and its own ring: the group
+   above draws both, or a focused field would put a brass halo round the middle
+   third of a control that reads as one object. */
+body.js .stepper input[type=number]{border-radius:0;text-align:center;width:78px;
+  padding-left:6px;padding-right:6px;box-shadow:none;
+  -moz-appearance:textfield;appearance:textfield}
+body.js .stepper input[type=number]::-webkit-outer-spin-button,
+body.js .stepper input[type=number]::-webkit-inner-spin-button{
+  -webkit-appearance:none;appearance:none;margin:0}
+/* The whole group borrows the field's warning colour, or the two buttons stay
+   stone while the number between them turns red. */
+.row.lvl-warn .step{border-color:var(--caution);color:var(--caution)}
+.row.lvl-stop .step{border-color:var(--flag);color:var(--flag)}
+.row.lvl-stop .stepper{box-shadow:0 0 0 3px rgba(158,59,42,.1)}
+/* A value that just moved on its own is worth half a second of the client's
+   attention — it is the one edit on this page they did not type. */
+@keyframes stepBlink{0%{background:rgba(169,129,79,.16)}100%{background:#fff}}
+@media (prefers-reduced-motion:no-preference){
+  body.js .stepper input.bumped{animation:stepBlink .5s var(--ease)}
+}
+textarea{width:100%;display:block;resize:vertical;min-height:150px;line-height:1.65;
+  font-size:13px;background:var(--stone)}
+textarea:focus{background:#fff}
+.field{padding:20px;border-bottom:1px solid var(--line)}
+.field:last-of-type{border-bottom:0}
+.field>label{display:block;font-weight:600;font-size:14px;margin-bottom:4px}
+.field .hint{margin-bottom:11px}
+.charcount{display:block;margin-top:7px;text-align:right;font-family:var(--font-mono);
+  font-size:9.5px;letter-spacing:.1em;color:var(--ink-soft)}
+body:not(.js) .charcount{display:none}
+.charcount.near{color:var(--caution)}
+
+/* --- Save bar: a plain bar without script, a floating one with it ---------- */
+.savebar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:16px 20px;border:1px solid var(--line);background:#fff;margin-bottom:24px}
+body.js .savebar{position:fixed;left:50%;bottom:24px;z-index:60;margin:0;
+  transform:translate(-50%,140%);opacity:0;pointer-events:none;
+  border-radius:999px;padding:12px 12px 12px 24px;border-color:rgba(10,11,12,.16);
+  box-shadow:0 26px 60px -26px rgba(10,11,12,.45);
+  transition:transform .5s var(--ease),opacity .4s var(--ease)}
+body.js.dirty .savebar{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+.savebar .what{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-soft)}
+.savebar .what b{color:var(--brass);font-weight:500}
+/* On a phone a centred pill is both too wide to fit and wide enough to cover the
+   field you were editing. It becomes a full-width bar pinned above the home
+   area, with its own opaque backing so whatever it overlaps stays legible. Both
+   rules below have to beat `body.js.dirty .savebar`, which is why they carry the
+   same three classes and are declared after it. */
+@media (max-width:700px){
+  body.js .savebar{left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));
+    transform:translateY(180%);border-radius:16px;padding:12px 14px;gap:10px;
+    background:rgba(255,255,255,.97);backdrop-filter:saturate(140%) blur(10px);
+    justify-content:space-between}
+  body.js.dirty .savebar{transform:translateY(0)}
+  .savebar .what{flex:1 1 100%;order:-1;font-size:9.5px}
+  .savebar .btn{flex:1 1 auto;justify-content:center}
+}
+
+/* --- Read-out strip: what the desk is set to, in one glance ---------------- */
+/* Tinted as a block rather than cell by cell: the strip is an auto-fit grid, so
+   an alternating tint breaks wherever the row happens to wrap. */
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));
+  border-top:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(236,236,231,.6),rgba(236,236,231,.22))}
+.readout div{padding:15px 20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.readout div:last-child{border-right:0}
+.readout .k{display:block;font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-soft)}
+.readout .v{display:block;margin-top:7px;font-family:var(--font-mono);font-size:15px;
+  font-variant-numeric:tabular-nums}
+.readout .v.on{color:var(--live)}
+.readout .v.off{color:var(--flag)}
+.readout .v.warn{color:var(--caution)}
+/* The outreach scoreboard: the same readout grid, but each figure is bigger —
+   it is the first thing the client reads on the card — and carries a plain
+   sub-line under it so nobody has to know what "delivered" means in the abstract.
+   Sits directly under the card header, above the search/chips row. */
+.cold-summary{border-top:0;border-bottom:1px solid var(--line)}
+.cold-summary .v{font-family:var(--font-display);font-size:26px;letter-spacing:-.02em;
+  margin-top:9px;line-height:1}
+.cold-summary .sub{display:block;margin-top:6px;font-family:var(--font-body);
+  font-size:11.5px;line-height:1.4;color:var(--ink-soft);text-transform:none;
+  letter-spacing:0}
+/* The plain-English retry policy, sitting between the scoreboard and the list. */
+.cold-legend{margin:0;padding:14px 20px;border-bottom:1px solid var(--line);
+  font-size:12.5px;line-height:1.6}
+.cold-legend b{color:var(--ink);font-weight:600}
+
+/* --- Health & Developer: the Doctor Desk, folded into the panel ----------- */
+/* The Health tab (the client's) and the Developer tab (mine) are two reads of
+   the same errors table. The client's is reused brand — .card, .readout, .flash
+   — plus one new thing, the severity chip that says in a word and a colour how
+   much a logged issue matters. The developer's adds the one raw surface on the
+   whole panel: a dark monospace block for a stack trace. */
+.sev{display:inline-flex;align-items:center;gap:6px;flex:none;
+  font-family:var(--font-mono);font-size:9px;letter-spacing:.13em;text-transform:uppercase;
+  padding:4px 9px;border-radius:999px;border:1px solid currentColor}
+.sev::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+.sev.high{color:var(--flag)}
+.sev.medium{color:var(--caution)}
+.sev.low{color:var(--ink-soft)}
+.sev.ok{color:var(--live)}
+/* One issue is one row, with the same brass/amber/red edge the switches and the
+   flagged number rows use — so "this is the one that matters" reads the same
+   wherever it appears on the panel. */
+.issue{position:relative;padding:16px 20px 16px 24px;border-bottom:1px solid var(--line)}
+.issue:last-child{border-bottom:0}
+.issue::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;opacity:.85}
+.issue.high::before{background:var(--flag)}
+.issue.medium::before{background:var(--caution)}
+.issue.low::before{background:var(--ink-soft);opacity:.4}
+.issue-top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.issue-msg{margin:11px 0 0;font-size:13.5px;line-height:1.55}
+.issue .src{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);
+  overflow-wrap:anywhere}
+.issue .meta{margin-top:9px;font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;
+  color:var(--ink-soft)}
+.issue .meta b{color:var(--ink);font-weight:500}
+.issue form{display:inline}
+/* The trace: the panel's only raw text, on the same dark plate as the masthead
+   so it reads as "under the hood" rather than as content. */
+.trace{margin:12px 0 2px;padding:14px 16px;border-radius:12px;overflow:auto;
+  background:var(--dark-2);color:var(--paper-line);
+  font-family:var(--font-mono);font-size:11.5px;line-height:1.55;
+  white-space:pre-wrap;overflow-wrap:anywhere;max-height:340px}
+.resolve-all{display:flex;justify-content:flex-end;gap:12px;align-items:center;
+  padding:14px 20px;border-bottom:1px solid var(--line)}
+
+/* --- Flash + notices ------------------------------------------------------- */
+.flash{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--live);
+  border-left-width:2px;border-radius:16px;color:var(--live);padding:14px 20px;margin:26px 0 0;
+  background:linear-gradient(180deg,#fff,#FCFCFA);
+  box-shadow:0 1px 2px rgba(10,11,12,.03),0 18px 40px -36px rgba(10,11,12,.24);
+  font-size:13px;line-height:1.55;animation:flashIn .5s var(--ease) both}
+.flash.bad{border-color:var(--flag);color:var(--flag)}
+.flash::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;
+  flex:none;margin-top:7px;box-shadow:0 0 0 4px rgba(46,122,94,.16)}
+.flash.bad::before{box-shadow:0 0 0 4px rgba(158,59,42,.16)}
+.flash.warn{border-color:var(--caution);color:var(--caution)}
+.flash.warn::before{box-shadow:0 0 0 4px rgba(138,85,20,.16)}
+/* The deck's own top padding already stands the first notice off the nav; the
+   26px is there to separate a second notice from the first. */
+.flash:first-child{margin-top:0}
+@keyframes flashIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+/* --- Footer ---------------------------------------------------------------- */
+.foot{margin-top:34px;padding-top:22px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-soft)}
+.foot span{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.foot a{border-bottom:1px solid var(--line);transition:border-color var(--dur-s) var(--ease)}
+.foot a:hover{border-color:var(--brass);color:var(--brass)}
+.foot .live-when{color:var(--brass)}
+
+/* --- Reveal on scroll: the site's own transition, blur included ------------ */
+.reveal{opacity:0;transform:translateY(26px);filter:blur(6px);
+  transition:opacity .9s var(--ease),transform .9s var(--ease),filter .9s var(--ease)}
+.reveal.is-visible{opacity:1;transform:none;filter:blur(0)}
+body:not(.js) .reveal{opacity:1;transform:none;filter:none}
+
+/* --- Sign-in / closed: one dark plate, crop-marked ------------------------- */
+.gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:34px 20px}
+.gate-card{width:100%;max-width:430px;border:1px solid var(--dark-line);
+  background:var(--dark-2);position:relative;
+  animation:mastIn var(--dur-l) var(--ease) both}
+.gate-head{padding:30px 30px 0}
+.gate-head h1{font-size:31px;margin-top:6px;color:var(--stone)}
+.gate-head p{margin-top:12px;color:#9A9D9F;font-size:13.5px;line-height:1.6}
+.gate form,.gate .gate-body{padding:24px 30px 30px}
+.gate label{display:block;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:#8B8E90;margin-bottom:8px}
+.gate input{width:100%;margin-bottom:18px;background:rgba(255,255,255,.04);
+  border-color:var(--dark-line);color:var(--stone)}
+.gate input:focus{background:rgba(255,255,255,.07)}
+/* --- Show password: one button, two states, and the state is the icon -------- */
+/* An open eye means "let me see it"; the same eye struck through means "put it
+   back". What does not change with the state is the button's name: a toggle that
+   renames itself is announced as a different control every time it is pressed, so
+   the name stays "Show password" and aria-pressed carries whether it is on. With
+   the script off the button is not rendered at all and the field is an ordinary
+   password box, which is why the padding it needs is scoped to body.js. */
+.pw{position:relative;display:block;margin-bottom:18px}
+/* The field's own bottom margin moves out to the wrapper, and the field becomes a
+   block. Both so the wrapper is exactly as tall as the box: a percentage height on
+   the button is otherwise measured against a line box, and the button hangs into
+   the gap under the field by however much the strut adds. */
+.gate .pw input{display:block;margin-bottom:0}
+.pw-eye{position:absolute;top:0;right:0;width:48px;height:100%;
+  display:flex;align-items:center;justify-content:center;padding:0;
+  border:0;background:none;color:#8B8E90;cursor:pointer;border-radius:0 4px 4px 0;
+  transition:color var(--dur-s) var(--ease)}
+body.js .pw input{padding-right:52px}
+/* Edge puts its own reveal control inside password fields. Two eyes side by side
+   is worse than either one. */
+body.js .pw input::-ms-reveal{display:none}
+.pw-eye:hover{color:var(--brass-soft)}
+.pw-eye:focus-visible{outline:2px solid var(--brass);outline-offset:-3px;
+  color:var(--brass-soft)}
+.pw-eye svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round;overflow:visible;
+  transition:transform var(--dur-s) var(--ease)}
+.pw-eye:hover svg{transform:scale(1.07)}
+.pw-eye:active svg{transform:scale(.93)}
+/* The iris closes and the slash draws itself across, rather than one icon being
+   swapped for another: the client is pressing this to watch something change. */
+.pw-eye .iris{transform-origin:12px 12px;transition:transform var(--dur-s) var(--ease)}
+.pw-eye .slash{stroke-dasharray:27;stroke-dashoffset:27;
+  transition:stroke-dashoffset var(--dur-s) var(--ease)}
+.pw-eye[aria-pressed="true"]{color:var(--brass-soft)}
+.pw-eye[aria-pressed="true"] .iris{transform:scale(.46)}
+.pw-eye[aria-pressed="true"] .slash{stroke-dashoffset:0}
+body:not(.js) .pw-eye{display:none}
+.gate .err{margin:0 0 16px;color:#E4A091;font-family:var(--font-mono);font-size:11.5px;
+  line-height:1.5}
+.gate code{font-family:var(--font-mono);font-size:12px;color:var(--brass-soft)}
+.gate .fine{margin-top:16px;color:#7E8183;font-size:12px;line-height:1.6}
+
+/* --- Narrow screens ------------------------------------------------------- */
+/* The panel is read on a phone as often as at a desk, so this block is the one
+   place the phone layout is decided. It is last in the sheet on purpose: every
+   rule here has to beat its desktop counterpart at the same specificity. */
+@media (max-width:760px){
+  /* 320px minimum against a 324px column at a 360px viewport was one rounding
+     error away from a sideways scroll. */
+  .split-even{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+  .split{gap:18px}
+  .card{margin-bottom:18px;border-radius:16px}
+  .card>h2,.card>.card-head{padding:13px 16px 13px 32px;font-size:9.5px;
+    letter-spacing:.13em}
+  .card>h2::before,.card>.card-head::before{left:16px}
+  .pad,.field,.listtools,.bar,.hint-pad{padding-left:16px;padding-right:16px}
+  .readout div{padding:13px 16px}
+  .section-head{gap:16px;flex-wrap:wrap;align-items:flex-start;padding-bottom:16px}
+  .section-head p{max-width:none}
+  /* A label, a number and its unit will not sit on one 328px line once the
+     label is longer than three words. The number keeps its own line, right
+     where the thumb already is. */
+  .row{flex-wrap:wrap;gap:6px 12px;padding:13px 16px}
+  .row .lbl{flex:1 1 100%;font-size:13px}
+  .row>span{display:flex;align-items:center}
+  input[type=number]{width:104px;padding:11px}
+  /* 44px of thumb per button, and the field narrows to pay for it: the stepper is
+     the reason this row is worth opening on a phone at all, since the native
+     arrows it replaces cannot be hit with a finger. */
+  body.js .step{width:44px}
+  body.js .stepper input[type=number]{width:76px;padding-top:12px;padding-bottom:12px}
+  .row .u{margin-left:11px}
+  .note{margin-top:4px;max-width:none}
+  .turn{max-width:88%}
+  .turns{max-height:none;padding:16px}
+  .search{flex:1 1 100%}
+  .foot{gap:12px;margin-top:26px}
+}
+/* Reserve the height of the floating save bar so the last row of a panel is
+   never the thing it lands on. */
+@media (max-width:700px){
+  html{scroll-padding-bottom:104px}
+  body.js .deck{padding-bottom:112px}
+}
+/* Landscape on a phone is about 850px wide, so it misses the 760px block above
+   entirely and keeps the desktop 56vh cap — roughly 220px of thread on a 390px
+   viewport, a letterbox you cannot read a conversation in. Here the constraint
+   is height, not width, so it is keyed on height: let the thread run its full
+   length and scroll with the page, the same as portrait. */
+@media (max-height:560px){
+  .turns{max-height:none;padding:14px 16px}
+  .turn{max-width:88%}
+}
+
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  body,.mast-top .eyebrow,.mast-top h1,.mast-top h1 .ln>span,.mast-top h1 em::after,
+  .mast-top .lede,.gauges,.cell,.cell::before,.lit-change,
+  .turn,.flash,.gate-card,body.js .panel.is-on{animation:none}
+  .reveal{opacity:1;transform:none;filter:none;transition:none}
+  .meter i{animation:none;transition:none}
+  .scroll-progress,.cursor-glow{display:none}
+  .site-nav{transition:none}
+  .btn,.btn::before,.btn-arrow,.lead,.lead::before,.chip,.tab,.card,.sw input,
+  .sw input::after,.sw input::before,label.sw,label.sw::before,
+  .section-head::after,.savebar,.step,.stepper,
+  .gauge,.gauge::before,.cell,.cell::before,.cell .k::before,.cells-mini b,
+  .pw-eye,.pw-eye svg,.pw-eye .iris,.pw-eye .slash{transition:none}
+  /* The sweep is a fill-mode animation, so switching it off leaves the rule at
+     scaleX(0). Put it back where hover expects to find it. */
+  .cell::before{transform:scaleX(1)}
+  .gauge:hover{transform:none}
+  .tab:not(.btn),.tab:not(.btn)::after{transition:none}
+  .lead:hover{padding-left:20px}
+  .card:hover{transform:none}
+  .lead::before,.lead:hover::before{transform:scaleY(0)}
+  .lead.sel::before{transform:scaleY(1)}
+  .section-head.is-visible::after{width:64px}
+  body.js .savebar{transition:none}
+  body.js:not(.dirty) .savebar{display:none}
+}
+</style></head><body class="on-dark"><script>document.body.className=(document.body.className+" js").trim();setTimeout(function(){var b=document.body;if(b.querySelector(".panel")&&!b.querySelector(".panel.is-on"))b.className=b.className.replace(/\bjs\b/g,"").trim()},1600)</script>
+<div class="gate"><div class="gate-card crop-frame">
+  <span class="corner tl"></span><span class="corner tr"></span>
+  <span class="corner bl"></span><span class="corner br"></span>
+  <div class="gate-head">
+    <span class="eyebrow">Dunder Mifflin</span>
+    <h1>Lead <em style="font-style:italic;color:var(--brass-soft)">desk</em></h1>
+    <p>Enter the password you were given to manage the WhatsApp and Instagram agent.</p>
+  </div>
+  <form method="post" action="/dashboard/login">
+    
+    <label for="pw">Password</label>
+    <span class="pw">
+      <input id="pw" type="password" name="password" autocomplete="current-password"
+             required autofocus>
+      <button type="button" class="pw-eye" data-pw-eye aria-controls="pw"
+              aria-pressed="false" aria-label="Show password">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M1.9 12S5.6 5.6 12 5.6 22.1 12 22.1 12 18.4 18.4 12 18.4 1.9 12 1.9 12Z"/>
+          <circle class="iris" cx="12" cy="12" r="3.15"/>
+          <line class="slash" x1="4.2" y1="19.8" x2="19.8" y2="4.2"/>
+        </svg>
+      </button>
+    </span>
+    <button class="btn btn-solid" type="submit">Sign in <span class="btn-arrow">&rarr;</span></button>
+  </form>
+  <script>(function(){
+    var f=document.getElementById("pw"),b=document.querySelector("[data-pw-eye]");
+    if(!f||!b)return;
+    b.addEventListener("click",function(){
+      var show=f.type==="password",at=f.selectionStart,to=f.selectionEnd;
+      f.type=show?"text":"password";
+      b.setAttribute("aria-pressed",show?"true":"false");
+      /* Changing the type drops the caret to the end in several browsers, which
+         sends the next character typed to the wrong place. Put it back, and keep
+         the focus on the field rather than leaving it on the button. */
+      f.focus();
+      try{f.setSelectionRange(at,to)}catch(e){}
+    });
+  })();</script>
+</div></div><style>.reveal{opacity:1!important;transform:none!important;filter:none!important}</style></body></html>

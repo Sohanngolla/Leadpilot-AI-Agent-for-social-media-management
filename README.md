@@ -15,6 +15,81 @@ as two Docker containers on a single small VPS.
 
 ---
 
+## How a lead flows through it
+
+The whole point of the system in one picture — from a name in a spreadsheet to
+either a booked conversation with the owner or a clean "no response" record.
+
+```mermaid
+flowchart TD
+    Start([New lead added to Google Sheet]) --> Cold["📤 Cold outreach<br/>Meta-approved template"]
+    Cold --> Wait{Lead replies?}
+
+    Wait -->|No| FU["🔁 Automatic follow-ups<br/>paced &middot; daily-capped &middot; quiet hours"]
+    FU --> Wait2{Replied now?}
+    Wait2 -->|"No — attempts used up"| NoResp[("😴 Marked<br/>no-response")]
+    Wait2 -->|Yes| Brain
+
+    Wait -->|Yes| Brain["🧠 Gemini reads the message"]
+    Brain --> Cls{"Buying intent<br/>or pricing?"}
+
+    Cls -->|Yes| Esc["🚨 Escalate to owner<br/>pause automation"]
+    Cls -->|No| Reply["💬 Auto-reply in the brand's persona"]
+
+    Esc --> Owner(["👤 Owner takes over the chat"])
+    Reply --> Log[("📊 Update status in<br/>Google Sheet + SQLite")]
+
+    classDef good fill:#e7f7ec,stroke:#2e7d32,color:#1b5e20;
+    classDef hot fill:#fdecea,stroke:#c62828,color:#8e1b16;
+    classDef neutral fill:#eef2f7,stroke:#546e7a,color:#263238;
+    class Start,Reply,Log good;
+    class Esc,Owner hot;
+    class Cold,FU,NoResp,Brain neutral;
+```
+
+## What happens the moment a message arrives
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor L as Lead
+    participant M as Meta<br/>(WhatsApp / IG)
+    participant C as Cloudflare<br/>Tunnel
+    participant A as FastAPI app
+    participant G as Gemini
+    participant S as Sheet + SQLite
+    actor O as Owner
+
+    L->>M: sends a message
+    M->>C: webhook POST
+    C->>A: /webhook
+    A->>G: classify + draft reply
+    G-->>A: intent + reply text
+    alt Hot lead (pricing / buying intent)
+        A->>O: 🚨 alert + conversation summary
+        A->>S: pause automation for this lead
+    else Normal enquiry
+        A->>M: send reply
+        M->>L: delivers reply
+        A->>S: log status + attempt
+    end
+```
+
+---
+
+## The owner's dashboard
+
+One URL and one password. No terminal, no Meta dashboard — live counts, the
+hot-lead inbox, an on/off switch for outbound messaging and an editable persona
+prompt. The screenshots below show the actual interface rendered with demo data
+(no real leads, numbers or conversations).
+
+![The lead desk — live counts, hot-lead inbox and controls](assets/dashboard.png)
+
+![Password-protected sign-in](assets/login.png)
+
+---
+
 ## What it does
 
 - **Answers inbound messages** on WhatsApp and Instagram with the same brain,
