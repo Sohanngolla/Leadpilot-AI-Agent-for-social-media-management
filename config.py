@@ -114,7 +114,9 @@ FOLLOWUP_TEMPLATE_NAME = os.environ.get("FOLLOWUP_TEMPLATE_NAME", CAMPAIGN_TEMPL
 
 GREETINGS = _csv_env("GREETINGS", ["Hi", "Hello", "Hey", "Namaste"])
 
-OWNER_NUMBER = os.environ.get("OWNER_NUMBER", "918919167539")
+# The owner's WhatsApp number (hot-lead + system alerts land here). Required —
+# set it in .env. No default on purpose: never hardcode a real number in the repo.
+OWNER_NUMBER = os.environ.get("OWNER_NUMBER", "").strip()
 
 # --- Error alerting ---------------------------------------------------------
 # The Doctor Desk (errors.py) records every fault; these say WHERE it also buzzes
