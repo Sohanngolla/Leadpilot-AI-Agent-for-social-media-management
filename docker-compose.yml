@@ -1,0 +1,110 @@
+# WhatsApp lead agent — 24/7 stack for the Hetzner VPS.
+#
+#   docker compose up -d --build     start (or restart after a code change)
+#   docker compose logs -f           watch what it is doing
+#   docker compose down              stop everything
+#
+# Two containers, one private network. Compose puts them on a shared network
+# automatically, and they find each other by SERVICE NAME (`agent`,
+# `cloudflared`) — no IP addresses, no localhost.
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # The FastAPI app: Meta webhook -> AI reply -> WhatsApp send, plus the
+  # background scheduler for cold outreach and follow-ups.
+  # ---------------------------------------------------------------------------
+  agent:
+    build: .
+    image: whatsapp-lead-agent:latest
+    container_name: wa-agent
+
+    # Come back up after a crash, after `docker restart`, and after a VPS
+    # reboot. "unless-stopped" means the only thing that keeps it down is you
+    # explicitly running `docker compose stop`/`down`.
+    restart: unless-stopped
+
+    # Bound to 127.0.0.1 on purpose, NOT 0.0.0.0.
+    # Cloudflare Tunnel reaches the app over the private Docker network below,
+    # so port 8001 never needs to be reachable from the internet. Binding to
+    # localhost means that even if the firewall were misconfigured, the outside
+    # world still cannot hit the webhook directly. You can still run
+    # `curl localhost:8001/health` while SSH'd into the server.
+    ports:
+      - "127.0.0.1:8001:8001"
+
+    environment:
+      # SQLite lives on the persistent volume below. Set explicitly so there is
+      # no doubt about where the database file ends up.
+      - AGENT_DB_PATH=/app/data/agent.db
+
+    volumes:
+      # PERSISTENT DATA. The SQLite database (conversation memory, settings,
+      # per-lead state) lives here. Because it is a bind mount to ./data on the
+      # host, it survives container restarts, rebuilds and image deletion.
+      # IMPORTANT: ./data on the host must be owned by UID 10001 (the non-root
+      # user inside the image) or SQLite cannot write. See DEPLOY.md step 5.
+      - ./data:/app/data
+
+      # SECRETS, mounted read-only at run time so they are never baked into
+      # the image. python-dotenv reads /app/.env because the working directory
+      # inside the container is /app.
+      - ./.env:/app/.env:ro
+
+      # Google service-account key for the Sheets integration. .env has
+      # GOOGLE_CREDENTIALS_FILE=gcreds.json, a path relative to /app, so this
+      # mount location is what makes that setting resolve correctly.
+      - ./gcreds.json:/app/gcreds.json:ro
+
+  # ---------------------------------------------------------------------------
+  # Cloudflare Tunnel. Gives wa.dundermifflin.example a real HTTPS address with no
+  # open inbound ports: cloudflared dials OUT to Cloudflare and traffic comes
+  # back down that existing connection. This is why the firewall in DEPLOY.md
+  # only allows SSH.
+  # ---------------------------------------------------------------------------
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: wa-cloudflared
+    restart: unless-stopped
+
+    # Runs the pre-existing NAMED tunnel by its UUID.
+    # The UUID is used rather than the name deliberately: looking a tunnel up
+    # by name requires the account-level cert.pem, whereas UUID + the
+    # credentials JSON is self-contained and works on a fresh server.
+    command: tunnel --config /etc/cloudflared/config.yml run 00000000-0000-0000-0000-000000000000
+
+    volumes:
+      # Tunnel identity + routing rules, copied up from ~/.cloudflared on the
+      # Mac. This folder must contain:
+      #   config.yml                                    - the ingress rules
+      #   00000000-0000-0000-0000-000000000000.json     - the tunnel credentials
+      # Read-only: cloudflared only ever needs to read them.
+      - ./cloudflared:/etc/cloudflared:ro
+
+    # Ordering only — start the app first so the tunnel's first health probe
+    # has something to talk to. cloudflared retries regardless.
+    depends_on:
+      - agent
+
+# ---------------------------------------------------------------------------
+# REQUIRED EDIT TO ./cloudflared/config.yml
+#
+# The config copied from the Mac points at localhost, which inside a container
+# means "this container" — the tunnel would only ever reach itself. Change the
+# service to the compose SERVICE NAME, and fix the credentials path to the
+# container path:
+#
+#   tunnel: 00000000-0000-0000-0000-000000000000
+#   credentials-file: /etc/cloudflared/00000000-0000-0000-0000-000000000000.json
+#   ingress:
+#     - hostname: wa.dundermifflin.example
+#       service: http://agent:8001        # <- NOT http://localhost:8001
+#     - service: http_status:404          # required catch-all, must be last
+#
+# ONE hostname is now enough. Instagram used to be a second container on :8000
+# with its own ig.dundermifflin.example ingress; it is now a PATH on this same app
+# (POST /webhook/instagram), because the Gemini rate gate is per-process and
+# splitting the channels would hand each one a full quota and bring the 429s
+# back. So there is no ig-relay service here, and Meta's Instagram webhook
+# points at https://wa.dundermifflin.example/webhook/instagram.
+# ---------------------------------------------------------------------------

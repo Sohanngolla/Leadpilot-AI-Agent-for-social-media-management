@@ -1,0 +1,49 @@
+# ==========================================================================
+#  PUBLIC REPO — anything below must NEVER be committed.
+#  This repo is world-visible; a single leaked secret is permanent.
+# ==========================================================================
+
+# --- Secrets & credentials -------------------------------------------------
+# (git does NOT support inline comments after a pattern, so keep them on
+#  their own lines — a trailing "# ..." becomes part of the pattern.)
+.env
+.env.*
+# keep ONLY the placeholder template, never a real .env
+!.env.client.example
+gcreds.json
+*.pem
+*.key
+
+# --- Live data & PII (real lead names / numbers / conversations) -----------
+data/
+backups/
+*.db
+*.db-wal
+*.db-shm
+*.db.gz
+*.sqlite
+*.sqlite3
+*-leads-*.xlsx
+
+# --- Live-infrastructure identity (server IP, SSH, tunnel creds regen) ------
+# These operational docs contain the real droplet IP, SSH user and tunnel
+# recovery steps. They stay on your machine; they do not belong in a public repo.
+HANDOVER.md
+HANDOFF.md
+DEPLOY.md
+NEXT-STEPS.md
+whatsapp-lead-agent-command-reference.docx
+
+# --- Client-facing / branded assets ----------------------------------------
+privacy.html
+where-to-copy.html
+preview/
+cloudflared/
+
+# --- Python / OS cruft ------------------------------------------------------
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.bak.*
+.DS_Store

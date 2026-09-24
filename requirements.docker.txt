@@ -1,0 +1,37 @@
+# Production dependency list for the Docker image.
+#
+# WHY THIS FILE EXISTS, separate from requirements.txt:
+#   1. Versions are PINNED deliberately (== not >=). A container that is
+#      rebuilt in six months must install the exact same libraries it was
+#      tested against — otherwise a silent upstream release can break a live
+#      24/7 bot with no code change on our side.
+#   2. requirements.txt was missing two libraries the code actually imports:
+#      gspread and google-auth (imported as
+#      `from google.oauth2.service_account import Credentials` in sheets.py).
+#      Installing from requirements.txt alone crashes on startup.
+#
+# To bump versions later: change a pin, run `docker compose up -d --build`,
+# and check `docker compose logs -f` before walking away. Change one at a time.
+
+# Web framework + ASGI server.
+# uvicorn[standard] adds uvloop and httptools — noticeably faster event loop
+# and HTTP parsing than the pure-Python fallbacks.
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+
+# Outbound HTTP: Meta Graph API (WhatsApp send) and the Gemini REST API.
+requests==2.32.3
+
+# Loads .env at import time (config.py calls load_dotenv()).
+python-dotenv==1.0.1
+
+# Google Sheets lead tracking, and the service-account auth it needs.
+gspread==6.1.4
+google-auth==2.36.0
+
+# Note: transitive dependencies (pydantic, starlette, uvloop, httptools,
+# google-auth's rsa/pyasn1, etc.) are resolved by pip rather than listed here,
+# which keeps this file readable. If you later want a byte-for-byte lock, run
+# inside the built container:
+#     docker compose exec agent pip freeze > requirements.lock.txt
+# and install from that instead.

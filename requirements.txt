@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+requests
+python-dotenv
+
+# sheets.py imports both of these (`import gspread`, and `from
+# google.oauth2.service_account import Credentials`). They were missing here for
+# a while, which is invisible until something actually touches the Google Sheet —
+# a venv built from this file ran fine and then died on the first lead lookup.
+# requirements.docker.txt pins the versions the image is tested against.
+gspread
+google-auth

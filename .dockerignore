@@ -1,0 +1,44 @@
+# What `docker build` must NOT send to the Docker daemon.
+#
+# The Dockerfile already uses an allow-list (`COPY *.py ./`), so none of this
+# could reach the image anyway. This file solves the other half of the problem:
+# everything here is uploaded as "build context" before the first instruction
+# runs. Without it, every build ships venv/ (62 MB) and — more to the point —
+# .env and gcreds.json to the daemon for no reason at all.
+#
+# Result: a build context of a few hundred KB, and secrets that only ever arrive
+# the way they should — as the read-only bind mounts in docker-compose.yml.
+
+# Secrets. Mounted at run time, never built in.
+.env
+.env.*
+!.env.client.example
+gcreds.json
+*.json
+
+# Local Python environment — the image installs its own from
+# requirements.docker.txt, and a Mac venv would not work on Linux regardless.
+venv/
+__pycache__/
+*.pyc
+
+# Live data. The SQLite database is a bind mount to ./data on the host; copying
+# a Mac-side copy into the build would be a stale snapshot at best.
+data/
+*.db
+*.db-journal
+*.sqlite3
+
+# Editor/OS noise and the snapshots taken before edits.
+*.py.bak.*
+*.bak
+*.bak[0-9]
+.DS_Store
+
+# Tunnel identity. Mounted read-only into the cloudflared container.
+cloudflared/
+
+# Docs and git history are not needed to run the agent.
+.git/
+.gitignore
+*.md
